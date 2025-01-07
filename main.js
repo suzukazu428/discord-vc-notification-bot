@@ -33,7 +33,7 @@ client.on("ready", () => {
   // ---
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
-// client.login(token)
+client.login(token)
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   let textChannel = null
