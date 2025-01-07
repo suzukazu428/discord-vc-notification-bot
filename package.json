@@ -1,8 +1,17 @@
 {
+  "name": "enter-notification-bot",
+  "description": "最初にVC入室した人を通知するBot",
   "type": "module",
   "main": "./main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
   "dependencies": {
     "discord.js": "^13.17.1",
     "dotenv": "^16.4.1"
-  }
+  },
+  "engines": {
+    "node": "^16.14.0"
+  },
+  "license": "MIT"
 }
