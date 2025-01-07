@@ -32,7 +32,6 @@ client.on("ready", () => {
   // await client.application.commands.set(commands, serverId)
   // ---
   console.log(`${client.user.tag}がサーバーにログインしました。`)
-  client.user.setActivity('スプラ組')
 })
 // client.login(token)
 
