@@ -46,6 +46,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   } else if (newState.guild.name === 'スプラ組') {
     textChannel = oldState.member.guild.channels.cache.get(process.env.TC_ID)
   }
+  // textChannel = oldState.member.guild.channels.cache.get(process.env.TC_ID)
   if (!textChannel) {
     console.log('テキストチャンネルが見つからない')
     return
