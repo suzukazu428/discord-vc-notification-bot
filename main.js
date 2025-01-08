@@ -1,8 +1,11 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 // import { Client, Intents, MessageSelectMenu, MessageActionRow } from 'discord.js'
 import { Client, Intents } from 'discord.js'
 import server from './server.js'
 // import { createTCList, createEmbed } from './function.js'
-server.listen(3000)
+server()
 
 const token = process.env.DISCORD_BOT_TOKEN
 if (token == undefined) {
