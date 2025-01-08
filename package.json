@@ -4,11 +4,10 @@
   "type": "module",
   "main": "./main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node --env-file=.env main.js"
   },
   "dependencies": {
     "discord.js": "^14.17.3",
-    "dotenv": "^16.4.1",
     "express": "^4.21.2"
   },
   "engines": {

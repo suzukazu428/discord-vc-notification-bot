@@ -1,8 +1,5 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
 // import { Client, Intents, MessageSelectMenu, MessageActionRow } from 'discord.js'
-import { Client, Intents } from 'discord.js'
+import { Client, GatewayIntentBits, SelectMenuBuilder, ActionRowBuilder } from 'discord.js'
 import server from './server.js'
 // import { createTCList, createEmbed } from './function.js'
 server()
@@ -14,9 +11,8 @@ if (token == undefined) {
 }
 
 const client = new Client({
-  // intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES]
-  intents: Object.values(Intents.FLAGS).reduce((a, b) => a | b)
-});
+  intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
+})
 
 // let outputTextChannelId = null // 現在の設定テキストチャンネルID
 // client.on('guildCreate', guild => {
