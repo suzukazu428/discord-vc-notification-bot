@@ -1,8 +1,7 @@
-// import { Client, Intents, MessageSelectMenu, MessageActionRow } from 'discord.js'
-import { Client, GatewayIntentBits, SelectMenuBuilder, ActionRowBuilder } from 'discord.js'
+import { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, SlashCommandBuilder, REST, Routes } from 'discord.js'
 import server from './server.js'
-// import { createTCList, createEmbed } from './function.js'
 server()
+import { createTCList, createEmbed } from './function.js'
 
 const token = process.env.DISCORD_BOT_TOKEN
 if (token == undefined) {
@@ -14,21 +13,22 @@ const client = new Client({
   intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
 })
 
-// let outputTextChannelId = null // 現在の設定テキストチャンネルID
-// client.on('guildCreate', guild => {
-//   // サーバー参加時に、デフォルトで出力するテキストチャンネルを設定
+let outputTextChannelId = null // 現在の設定テキストチャンネルID
+client.on('guildCreate', guild => {
+  // サーバー参加時に、デフォルトで出力するテキストチャンネルを設定
 //   const textChannel = guild.channels.cache.find(c => c.type === 'GUILD_TEXT')
 //   outputTextChannelId = textChannel.id
-// })
+})
 
-client.on("ready", () => {
+client.on("ready", async (bot) => {
   // --- 新バージョン
-  // const serverId = client.guilds.cache.map(guild => guild.id).join('¥n')
-  // const commands = [{
-  //   name: 'change',
-  //   description: '入室を通知するテキストチャンネルを変更します。'
-  // }]
-  // await client.application.commands.set(commands, serverId)
+  const change = new SlashCommandBuilder()
+    .setName('change')
+    .setDescription('入室を通知するテキストチャンネルを変更します。')
+  const commands = [change]
+  const rest = new REST({ version: '10' }).setToken(token)
+  await rest.put(Routes.applicationCommands(bot.user.id),{ body: commands })
+  console.log('コマンド追加完了!')
   // ---
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
@@ -66,7 +66,6 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   // 入室時
   if (oldChannelId === null && newChannelId !== null) {
   const memberCount = client.channels.cache.get(newChannelId).members.size
-  console.log('入室人数', memberCount)
     // 最初の1人以外はメッセージを送信しない
     if (memberCount > 1) return
     await textChannel.send(
@@ -92,45 +91,45 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   }
 })
 
-// client.on('interactionCreate', async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
   // SelectMenuに反応する処理
-//   if(interaction.isSelectMenu()) {
-//     if(interaction.customId === 'textChannel') {
-//       outputTextChannelId = interaction.values[0]
-//       const embed = await createEmbed(interaction)
-//       await interaction.update({
-//         content: 'テキストチャンネルを設定しました。',
-//         embeds: [embed],
-//         components: []
-//       })
-//     }
-//   }
+  if(interaction.isStringSelectMenu()) {
+    if(interaction.customId === 'textChannel') {
+      outputTextChannelId = interaction.values[0]
+      const embed = await createEmbed(interaction, outputTextChannelId)
+      await interaction.update({
+        content: 'テキストチャンネルを設定しました。',
+        embeds: [embed],
+        components: []
+      })
+    }
+  }
 
-//   // スラッシュコマンドに反応する処理
-//   if (!interaction.isCommand()) return
+  // スラッシュコマンド以外はここでreturn
+  if (!interaction.isChatInputCommand()) return
 
-//   // 通知するテキストチャンネル変更コマンド
-//   if (interaction.commandName === 'change') {
-//     const selectMenuValueList = await createTCList(interaction.guild.channels.cache)
-//     const row = new MessageActionRow().addComponents(
-//       new MessageSelectMenu()
-//         .setCustomId('textChannel')
-//         .setPlaceholder('テキストチャンネル')
-//         .addOptions(selectMenuValueList)
-//     )
-//     // 設定済のテキストチャンネルがない場合はembed非表示
-//     if (!outputTextChannelId) {
-//       await interaction.reply({
-//         content: '入室を通知するテキストチャンネルを選択してください。',
-//         components: [row]
-//       })
-//       return
-//     }
-//     const embed = await createEmbed(interaction)
-//     await interaction.reply({
-//       content: '入室を通知するテキストチャンネルを選択してください。',
-//       embeds: [embed],
-//       components: [row]
-//     })
-//   }
-// })
+  // 通知するテキストチャンネル変更コマンド
+  if (interaction.commandName === 'change') {
+    const selectMenuValueList = await createTCList(interaction.guild.channels.cache)
+    const row = new ActionRowBuilder().setComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId('textChannel')
+        .setPlaceholder('テキストチャンネル')
+        .setOptions(selectMenuValueList)
+    )
+    // 設定済のテキストチャンネルがない場合はembed非表示
+    if (!outputTextChannelId) {
+      await interaction.reply({
+        content: '入室を通知するテキストチャンネルを選択してください。',
+        components: [row]
+      })
+      return
+    }
+    const embed = await createEmbed(interaction, outputTextChannelId)
+    await interaction.reply({
+      content: '入室を通知するテキストチャンネルを選択してください。',
+      embeds: [embed],
+      components: [row]
+    })
+  }
+})
