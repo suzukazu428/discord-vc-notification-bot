@@ -1,7 +1,7 @@
 import { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, SlashCommandBuilder, REST, Routes } from 'discord.js'
 import server from './server.js'
 server()
-import { createTCList, createEmbed } from './function.js'
+import { createTCList, createEmbed } from './assets/functions.js'
 
 const token = process.env.DISCORD_BOT_TOKEN
 if (token == undefined) {
