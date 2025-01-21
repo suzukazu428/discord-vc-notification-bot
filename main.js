@@ -1,7 +1,8 @@
 import { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, SlashCommandBuilder, REST, Routes } from 'discord.js'
 import server from './server.js'
 server()
-import { createTCList, createEmbed } from './assets/functions.js'
+import { commands } from "./assets/commands.js"
+import { createEmbed } from './assets/functions.js'
 
 const token = process.env.DISCORD_BOT_TOKEN
 if (token == undefined) {
@@ -21,18 +22,9 @@ client.on('guildCreate', guild => {
 })
 
 client.on("ready", async (bot) => {
-  // --- 新バージョン
-  const change = new SlashCommandBuilder()
-    .setName('change')
-    .setDescription('入室を通知するテキストチャンネルを変更します。')
-  const commands = [change]
-  const rest = new REST({ version: '10' }).setToken(token)
-  await rest.put(Routes.applicationCommands(bot.user.id),{ body: commands })
-  console.log('コマンド追加完了!')
-  // ---
+  await commands.commandsInitialize(bot.user.id)
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
-client.login(token)
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   let textChannel = null
@@ -109,27 +101,14 @@ client.on('interactionCreate', async (interaction) => {
   if (!interaction.isChatInputCommand()) return
 
   // 通知するテキストチャンネル変更コマンド
-  if (interaction.commandName === 'change') {
-    const selectMenuValueList = await createTCList(interaction.guild.channels.cache)
-    const row = new ActionRowBuilder().setComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId('textChannel')
-        .setPlaceholder('テキストチャンネル')
-        .setOptions(selectMenuValueList)
-    )
-    // 設定済のテキストチャンネルがない場合はembed非表示
-    if (!outputTextChannelId) {
-      await interaction.reply({
-        content: '入室を通知するテキストチャンネルを選択してください。',
-        components: [row]
-      })
-      return
-    }
-    const embed = await createEmbed(interaction, outputTextChannelId)
-    await interaction.reply({
-      content: '入室を通知するテキストチャンネルを選択してください。',
-      embeds: [embed],
-      components: [row]
-    })
+  try {
+    commands[interaction.commandName].execute(interaction, outputTextChannelId)
+  } catch(e) {
+    console.error(`存在しないコマンドを入力されました。
+コマンド: ${interaction.commandName}
+エラー内容: ${e}`)
+    return
   }
 })
+
+client.login(token)
