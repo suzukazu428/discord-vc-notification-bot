@@ -16,16 +16,20 @@ const client = new Client({
 })
 
 client.on('guildCreate', async guild => {
-  // firestoreにサーバーIDの存在チェック
-  const serverData = await firebase.findVoiceChannel(guild.id)
-  if (serverData.length) return
-  // 存在していない場合は追加
-  const textChannel = guild.channels.cache.find(c => c.type === 0)
-  await firebase.createVoiceChannel({
-    serverId: guild.id,
-    serverName: guild.name,
-    textChannelId: textChannel.id
-  })
+  try {
+    // firestoreにサーバーIDの存在チェック
+    const serverData = await firebase.findVoiceChannel(guild.id)
+    if (serverData.length) return
+    // 存在していない場合は追加
+    const textChannel = guild.channels.cache.find(c => c.type === 0)
+    await firebase.createVoiceChannel({
+      serverId: guild.id,
+      serverName: guild.name,
+      textChannelId: textChannel.id
+    })
+  } catch(e) {
+    console.error(e)
+  }
 })
 
 client.on("ready", async (bot) => {
@@ -33,42 +37,48 @@ client.on("ready", async (bot) => {
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
 
+let status = 'ready'
 client.on("voiceStateUpdate", async (oldState, newState) => {
-  // firestoreからテキストチャンネルIDを持ってきて設定
-  const serverData = await firebase.findVoiceChannel(newState.guild.id)
-  const textChannel = oldState.member.guild.channels.cache.get(serverData[0].textChannelId)
-
+  if(status === 'working') throw new Error('既に処理中です。')
+  status = 'working'
   // 入退室IDとユーザー名設定
   const oldChannelId = oldState.channelId
   const newChannelId = newState.channelId
   const firstEnterName = oldState.member.nickname ?? oldState.member.user.displayName
   const lastExitName = newState.member.nickname ?? newState.member.user.displayName
 
-  // 入室時
-  if (oldChannelId === null && newChannelId !== null) {
-  const memberCount = client.channels.cache.get(newChannelId).members.size
-    // 最初の1人以外はメッセージを送信しない
-    if (memberCount > 1) return
-    await textChannel.send(
-      `一人目に${firstEnterName}さんが<#${newChannelId}>へ入室しました。<t:${Math.floor(Date.now() / 1000)}:T>`
-    )
-  }
-  // 退出時
-  else if (oldChannelId !== null && newChannelId === null) {
-    // textChannel.send(
-    //   `${lastExitName}さんが退室しました。`
-    // )
-  }
-  // VC移動時
-  else if (oldChannelId !== null && newChannelId !== null) {
-    // if (oldChannelId !== newChannelId) {
-    //   return textChannel.send(
-    //     `**${lastExitName}**さんが<#${oldChannelId}>から<#${newChannelId}>へ移動しました。<t:${Math.floor(Date.now() / 1000)}:T>`
-    //   );
-    // }
-  }
-  else {
-    return;
+  try {
+    // 入室時
+    if (oldChannelId === null && newChannelId !== null) {
+      const memberCount = client.channels.cache.get(newChannelId).members.size
+        // 最初の1人以外は処理しない
+      if (memberCount === 1) {
+        // firestoreからテキストチャンネルIDを持ってきて設定
+        const serverData = await firebase.findVoiceChannel(newState.guild.id)
+        const textChannel = oldState.member.guild.channels.cache.get(serverData[0].textChannelId)
+        await textChannel.send(
+          `一人目に${firstEnterName}さんが<#${newChannelId}>へ入室しました。<t:${Math.floor(Date.now() / 1000)}:T>`
+        )
+      }
+    }
+    // 退出時
+    else if (oldChannelId !== null && newChannelId === null) {
+      // textChannel.send(
+      //   `${lastExitName}さんが退室しました。`
+      // )
+    }
+    // VC移動時
+    else if (oldChannelId !== null && newChannelId !== null) {
+      // if (oldChannelId !== newChannelId) {
+      //   textChannel.send(
+      //     `**${lastExitName}**さんが<#${oldChannelId}>から<#${newChannelId}>へ移動しました。<t:${Math.floor(Date.now() / 1000)}:T>`
+      //   );
+      // }
+    }
+  } catch(e) {
+    console.error(e)
+  } finally {
+    status = 'ready'
   }
 })
 
