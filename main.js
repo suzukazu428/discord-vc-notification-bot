@@ -39,7 +39,7 @@ client.on("ready", async (bot) => {
 
 let status = 'ready'
 client.on("voiceStateUpdate", async (oldState, newState) => {
-  if(status === 'working') throw new Error('既に処理中です。')
+  if(status === 'working') return
   status = 'working'
   // 入退室IDとユーザー名設定
   const oldChannelId = oldState.channelId
