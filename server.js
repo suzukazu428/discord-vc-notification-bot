@@ -6,7 +6,7 @@ app.get('/', (req, res) => {
   res.send('I am alive')
 })
 const server = app.listen(port, () => {
-  console.log('Server is running.')
+  console.log(`Server is running on port ${port}.`)
 })
 const keepAlive = async () => {
   server.keepAliveTimeout = 0
