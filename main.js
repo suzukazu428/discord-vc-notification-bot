@@ -1,20 +1,26 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import server from './server.js'
-server()
 import { commandsInitialize, commands } from "./assets/commands.js"
 import { createEmbed } from './assets/functions.js'
 import firebase from './assets/firebase.js'
 
+// サーバー起動
+await server()
+
+// Discordトークンチェック
 const token = process.env.DISCORD_BOT_TOKEN
 if (token == undefined) {
   console.log("DISCORD_BOT_TOKENが設定されていません。");
   process.exit(0);
+} else if (token) {
+  console.log('DISCORD_BOT_TOKEN認証完了')
 }
 
 const client = new Client({
   intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
 })
 
+// サーバー起動時にfirestoreにサーバー情報があるかチェックし、なければ追加する
 client.on('guildCreate', async guild => {
   try {
     // firestoreにサーバーIDの存在チェック
@@ -33,6 +39,7 @@ client.on('guildCreate', async guild => {
 })
 
 client.on("ready", async (bot) => {
+  console.log('ready?')
   await commandsInitialize(bot.user.id)
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
