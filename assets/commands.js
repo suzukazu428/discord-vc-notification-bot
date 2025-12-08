@@ -19,11 +19,15 @@ const commandDataList = [
 
 const commandsInitialize = async (botID) => {
   try {
+    console.log(`-----
+コマンド追加開始...`)
     const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_BOT_TOKEN)
     await rest.put(Routes.applicationCommands(botID),{ body: commandDataList })
     console.log('コマンド追加完了!')
   } catch(e) {
     console.error('コマンド追加失敗', e)
+  } finally {
+    console.log('-----')
   }
 }
 
