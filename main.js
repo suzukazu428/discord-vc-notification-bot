@@ -1,27 +1,40 @@
-import { Client, GatewayIntentBits } from 'discord.js'
+import { Client, GatewayIntentBits, Events } from 'discord.js'
 import server from './server.js'
 import { commandsInitialize, commands } from "./assets/commands.js"
 import { createEmbed } from './assets/functions.js'
 import firebase from './assets/firebase.js'
 
 // サーバー起動
-await server()
+server()
 
 // Discordトークンチェック
 const token = process.env.DISCORD_BOT_TOKEN
-if (token == undefined) {
+if (!token) {
   console.log("DISCORD_BOT_TOKENが設定されていません。");
   process.exit(0);
-} else if (token) {
+} else {
   console.log('DISCORD_BOT_TOKEN認証完了')
 }
 
 const client = new Client({
-  intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
+  // intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildVoiceStates
+  ]
+})
+
+await client.login(token)
+
+client.once(Events.ClientReady, async bot => {
+  console.log('ready?')
+  await commandsInitialize(bot.user.id)
+  console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
 
 // サーバー起動時にfirestoreにサーバー情報があるかチェックし、なければ追加する
-client.on('guildCreate', async guild => {
+client.on(Events.GuildCreate, async guild => {
   try {
     // firestoreにサーバーIDの存在チェック
     const serverData = await firebase.findVoiceChannel(guild.id)
@@ -38,14 +51,9 @@ client.on('guildCreate', async guild => {
   }
 })
 
-client.on("ready", async (bot) => {
-  console.log('ready?')
-  await commandsInitialize(bot.user.id)
-  console.log(`${client.user.tag}がサーバーにログインしました。`)
-})
-
+// ボイスチャンネルに変更があった場合
 let status = 'ready'
-client.on("voiceStateUpdate", async (oldState, newState) => {
+client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
   if(status === 'working') return
   status = 'working'
   // 入退室IDとユーザー名設定
@@ -89,7 +97,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   }
 })
 
-client.on('interactionCreate', async (interaction) => {
+// スラッシュコマンド検知
+client.on(Events.InteractionCreate, async (interaction) => {
   if(interaction.isStringSelectMenu()) {
     // SelectMenuに反応する処理
     if(interaction.customId === 'textChannel') {
@@ -120,4 +129,3 @@ client.on('interactionCreate', async (interaction) => {
   }
 })
 
-client.login(token)
