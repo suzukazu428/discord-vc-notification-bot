@@ -3,13 +3,19 @@ const app = express()
 const port = process.env.PORT || 3001
 
 app.get('/', (req, res) => {
-  res.send('I am alive')
+  const data = {
+      "message": "I am alive.",
+      port
+    }
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.json(data);
 })
-const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}.`)
-})
-const keepAlive = () => {
+
+const connect = async () => {
+  const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}.`)
+  })
   server.keepAliveTimeout = 0
 }
 
-export default keepAlive
+export default connect
