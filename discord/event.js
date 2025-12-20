@@ -18,6 +18,10 @@ client.once(Events.ClientReady, async bot => {
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
 
+client.on(Events.ShardDisconnect, () => {
+  console.log('disconnected')
+})
+
 // サーバー起動時にfirestoreにサーバー情報があるかチェックし、なければ追加する
 client.on(Events.GuildCreate, async guild => {
   try {
