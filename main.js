@@ -1,5 +1,6 @@
 import server from './server.js'
 import { client } from './discord/event.js'
+import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
 
 // 関数
@@ -14,6 +15,7 @@ const login = async () => {
   try {
     await client.login(token)
     .then(() => console.log('ログイン成功'))
+    await commandsInitialize(client.user.id)
   } catch (e) {
     console.error('ログイン失敗', e)
   }
@@ -26,13 +28,17 @@ const restart = async () => {
   .then(() => console.log('ログアウト成功'))
   await login()
 }
+const firstStartUp = async () => {
+  // サーバー起動
+  await server()
+  console.log('サーバー起動完了')
+
+  await login()
+}
+
 
 // 実行
-// サーバー起動
-await server()
-console.log('サーバー起動完了')
-
-await login()
+await firstStartUp();
 
 export {
   login,

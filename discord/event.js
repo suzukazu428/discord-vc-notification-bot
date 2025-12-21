@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Events } from 'discord.js'
-import { commandsInitialize, commands } from "../assets/commands.js"
+import { commands } from "../assets/commands.js"
 import { createEmbed } from '../assets/functions.js'
 import firebase from '../assets/firebase.js'
 
@@ -12,9 +12,8 @@ const client = new Client({
   ]
 })
 
-client.once(Events.ClientReady, async bot => {
+client.once(Events.ClientReady, () => {
   console.log('ready?')
-  await commandsInitialize(bot.user.id)
   console.log(`${client.user.tag}がサーバーにログインしました。`)
 })
 
