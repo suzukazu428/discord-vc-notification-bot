@@ -118,6 +118,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 })
 
+// エラーイベント
+client.on(Events.Error, err => {
+  console.error('discord.jsエラー: ', err)
+})
+client.on(Events.ShardError, err => {
+  console.error('WebSocketエラー: ', err)
+})
+client.on(Events.Warn, warn => {
+  console.warn("警告: ", warn)
+})
+
 
 export {
   client
