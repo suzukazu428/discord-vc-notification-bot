@@ -3,6 +3,7 @@ import server from './server.js'
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
+const serverStartUp = server
 
 // 関数
 // Discordトークンチェック後ログイン
@@ -37,7 +38,7 @@ const restart = async () => {
 // 初回起動
 const firstStartUp = async () => {
   // サーバー起動
-  await server()
+  await serverStartUp()
    .then(() => console.log('サーバー起動成功'))
 
   await login()
