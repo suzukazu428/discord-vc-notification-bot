@@ -36,11 +36,12 @@ const restart = async () => {
 
 // 初回起動
 const firstStartUp = async () => {
+  // サーバー起動
+  await server()
+   .then(() => console.log('サーバー起動成功'))
+
   await login()
 
-  // サーバー起動
-  console.log('サーバー起動完了')
-  await server()
 }
 
 // 最小起動
