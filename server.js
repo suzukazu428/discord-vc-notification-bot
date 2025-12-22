@@ -40,11 +40,11 @@ app.get('/minimumStart', async (req, res) => {
     res.json(data);
 })
 
-const connect = async () => {
+const connect = () => {
   console.log('サーバー起動処理開始')
-   app.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
   })
 }
 
-export default connect
+export { connect }

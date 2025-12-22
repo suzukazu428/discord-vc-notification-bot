@@ -1,5 +1,5 @@
 import { Client } from 'discord.js'
-import server from './server.js'
+import { connect } from './server.js'
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
@@ -11,16 +11,15 @@ const login = async () => {
     console.log("DISCORD_BOT_TOKENが設定されていません。");
     process.exit(0);
   }
-  console.log('DISCORD_BOT_TOKEN認証完了')
   console.log('ログイン開始')
   try {
     if (client) {
       await client.login(token)
-      .then(() => console.log('ログイン成功'))
+        .then(() => console.log('ログイン成功'))
+      await commandsInitialize(client.user.id)
     } else {
-      console.error('Client is not initialized.');
+      throw new Error('Client is not initialized.');
     }
-    await commandsInitialize(client.user.id)
   } catch (e) {
     console.error('ログイン失敗', e)
   }
@@ -37,7 +36,7 @@ const restart = async () => {
 // 初回起動
 const firstStartUp = async () => {
   // サーバー起動
-  await server()
+  connect()
 
   await login()
 
@@ -56,7 +55,7 @@ const minimumStartUp = async () => {
 
 
 // 実行
-await firstStartUp();
+firstStartUp();
 
 export {
   login,
