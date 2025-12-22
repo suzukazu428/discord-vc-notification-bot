@@ -40,7 +40,7 @@ const restart = async () => {
 const firstStartUp = async () => {
   // サーバー起動
   console.log('サーバー起動処理開始')
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
   })
   server.keepAliveTimeout = 0
