@@ -46,7 +46,8 @@ const minimumStartUp = async () => {
   const minimumClient = new Client({
     intents: []
   })
-  await minimumClient.login(token)
+  minimumClient.login(token)
+    .then(() => console.log('最小起動ログイン成功'))
 }
 
 
