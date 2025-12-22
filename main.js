@@ -1,5 +1,7 @@
 import { Client } from 'discord.js'
-import { app } from './server.js'
+import express from "express"
+const app = express()
+const port = process.env.PORT || 3001
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
@@ -63,6 +65,7 @@ const minimumStartUp = async () => {
 await firstStartUp();
 
 export {
+  app,
   login,
   restart,
   minimumStartUp

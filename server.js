@@ -1,7 +1,4 @@
-import express from "express"
-const app = express()
-const port = process.env.PORT || 3001
-import { login, restart, minimumStartUp } from './main.js'
+import { app, login, restart, minimumStartUp } from './main.js'
 
 app.get('/', (req, res) => {
   const data = {
@@ -46,5 +43,3 @@ app.get('/minimumStart', async (req, res) => {
 //   })
 //   server.keepAliveTimeout = 0
 // }
-
-export { app }
