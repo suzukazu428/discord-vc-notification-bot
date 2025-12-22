@@ -14,8 +14,12 @@ const login = async () => {
   console.log('DISCORD_BOT_TOKEN認証完了')
   console.log('ログイン開始')
   try {
-    await client.login(token)
-    .then(() => console.log('ログイン成功'))
+    if (client) {
+      await client.login(token)
+      .then(() => console.log('ログイン成功'))
+    } else {
+      console.error('Client is not initialized.');
+    }
     await commandsInitialize(client.user.id)
   } catch (e) {
     console.error('ログイン失敗', e)
