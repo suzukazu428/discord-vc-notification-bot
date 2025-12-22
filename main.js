@@ -1,7 +1,5 @@
 import { Client } from 'discord.js'
-import express from "express"
-const app = express()
-const port = process.env.PORT || 3001
+import server from './server.js'
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
@@ -40,10 +38,7 @@ const restart = async () => {
 const firstStartUp = async () => {
   // サーバー起動
   console.log('サーバー起動処理開始')
-  const server = app.listen(port, () => {
-    console.log(`Server is running on port ${port}.`)
-  })
-  server.keepAliveTimeout = 0
+  await server()
 
   await login()
 
@@ -65,7 +60,6 @@ const minimumStartUp = async () => {
 await firstStartUp();
 
 export {
-  app,
   login,
   restart,
   minimumStartUp

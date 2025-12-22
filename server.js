@@ -1,4 +1,8 @@
-import { app, login, restart, minimumStartUp } from './main.js'
+
+import express from "express"
+const app = express()
+const port = process.env.PORT || 3001
+import { login, restart, minimumStartUp } from './main.js'
 
 app.get('/', (req, res) => {
   const data = {
@@ -36,10 +40,12 @@ app.get('/minimumStart', async (req, res) => {
     res.json(data);
 })
 
-// const connect = async () => {
-//   console.log('サーバー起動処理開始')
-//   const server = app.listen(port, () => {
-//     console.log(`Server is running on port ${port}.`)
-//   })
-//   server.keepAliveTimeout = 0
-// }
+const connect = async () => {
+  console.log('サーバー起動処理開始')
+  const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}.`)
+  })
+  server.keepAliveTimeout = 0
+}
+
+export default connect
