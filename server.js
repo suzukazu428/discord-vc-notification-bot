@@ -29,7 +29,7 @@ app.get('/reStart', async (req, res) => {
     res.json(data);
 })
 
-app.get('/reStart', async (req, res) => {
+app.get('/minimumStart', async (req, res) => {
   await minimumStartUp();
   const data = {
       "message": "bot最小起動を実行しました。",
