@@ -12,9 +12,9 @@ const client = new Client({
   ]
 })
 
-client.once(Events.ClientReady, () => {
+client.on(Events.ClientReady, readyClient => {
   console.log('ready?')
-  console.log(`${client.user.tag}がサーバーにログインしました。`)
+  console.log(`${readyClient.user.tag}がサーバーにログインしました。`)
 })
 
 client.on(Events.ShardDisconnect, () => {
