@@ -47,4 +47,4 @@ app.get('/minimumStart', async (req, res) => {
 //   server.keepAliveTimeout = 0
 // }
 
-export default app
+export { app }

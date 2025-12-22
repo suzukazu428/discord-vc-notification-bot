@@ -1,5 +1,5 @@
 import { Client } from 'discord.js'
-import app from './server.js'
+import { app } from './server.js'
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
 const token = process.env.DISCORD_BOT_TOKEN
