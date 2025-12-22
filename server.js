@@ -42,10 +42,9 @@ app.get('/minimumStart', async (req, res) => {
 
 const connect = async () => {
   console.log('サーバー起動処理開始')
-  const server = app.listen(port, () => {
+   app.listen(port, () => {
     console.log(`Server is running on port ${port}.`)
   })
-  server.keepAliveTimeout = 0
 }
 
 export default connect

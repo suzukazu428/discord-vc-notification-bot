@@ -37,7 +37,6 @@ const restart = async () => {
 // 初回起動
 const firstStartUp = async () => {
   // サーバー起動
-  console.log('サーバー起動処理開始')
   await server()
 
   await login()
