@@ -1,3 +1,4 @@
+import { Client } from 'discord.js'
 import server from './server.js'
 import { client } from './discord/event.js'
 import { commandsInitialize } from "./assets/commands.js"
@@ -28,6 +29,8 @@ const restart = async () => {
   .then(() => console.log('ログアウト成功'))
   await login()
 }
+
+// 初回起動
 const firstStartUp = async () => {
   // サーバー起動
   await server()
@@ -36,11 +39,22 @@ const firstStartUp = async () => {
   await login()
 }
 
+// 最小起動
+const minimumStartUp = async () => {
+  client.destroy()
+    .then(() => console.log('ログアウト成功'))
+  const minimumClient = new Client({
+    intents: []
+  })
+  await minimumClient.login(token)
+}
+
 
 // 実行
 await firstStartUp();
 
 export {
   login,
-  restart
+  restart,
+  minimumStartUp
 }
