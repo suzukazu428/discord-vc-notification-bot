@@ -11,11 +11,12 @@ const login = async () => {
     console.log("DISCORD_BOT_TOKENが設定されていません。");
     process.exit(0);
   }
-  console.log('ログイン開始')
   try {
+    console.log('ログイン開始')
     if (client) {
-      await client.login(token)
-        .then(() => console.log('ログイン成功'))
+      const loginClient = await client.login(token)
+      console.log(`ログイン: ${loginClient !== ""}`)
+
       await commandsInitialize(client.user.id)
     } else {
       throw new Error('Client is not initialized.');
@@ -37,6 +38,7 @@ const restart = async () => {
 const firstStartUp = async () => {
   // サーバー起動
   connect()
+  console.log('サーバー起動成功')
 
   await login()
 
