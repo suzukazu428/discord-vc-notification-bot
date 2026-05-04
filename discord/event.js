@@ -4,16 +4,13 @@ import { createEmbed } from '../assets/functions.js'
 import firebase from '../assets/firebase.js'
 
 const client = new Client({
-  // intents: Object.values(GatewayIntentBits).reduce((a, b) => a | b)
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildVoiceStates
   ]
 })
 
 client.on(Events.ClientReady, readyClient => {
-  console.log('ready?')
   console.log(`${readyClient.user.tag}がサーバーにログインしました。`)
 })
 
