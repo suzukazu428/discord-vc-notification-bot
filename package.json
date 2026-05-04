@@ -7,9 +7,9 @@
     "start": "node --env-file=.env main.js"
   },
   "dependencies": {
-    "discord.js": "^14.25.1",
+    "discord.js": "^14.26.4",
     "express": "^5.2.1",
-    "firebase": "^12.7.0"
+    "firebase": "^12.12.1"
   },
   "engines": {
     "node": "^22.12.0"
