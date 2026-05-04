@@ -14,9 +14,11 @@ const login = async () => {
   try {
     console.log('ログイン開始')
     if (client) {
+      // ログイン処理
       const loginClient = await client.login(token)
       console.log(`ログイン: ${loginClient !== ""}`)
 
+      // コマンド設定
       await commandsInitialize(client.user.id)
     } else {
       throw new Error('Client is not initialized.');
@@ -36,12 +38,11 @@ const restart = async () => {
 
 // 初回起動
 const firstStartUp = async () => {
+  await login()
+
   // サーバー起動
   connect()
   console.log('サーバー起動成功')
-
-  await login()
-
 }
 
 // 最小起動
